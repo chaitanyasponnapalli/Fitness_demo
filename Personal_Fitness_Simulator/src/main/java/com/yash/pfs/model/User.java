@@ -2,10 +2,13 @@ package com.yash.pfs.model;
 
 import java.sql.Timestamp;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -23,6 +26,9 @@ import org.springframework.stereotype.Component;
 @Component
 @Entity
 @Table(name="users")
+@org.hibernate.annotations.Entity(
+		dynamicInsert = true
+)
 public class User {
 	/**
 	 * id of user
@@ -30,6 +36,7 @@ public class User {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="user_id")
 	private int id;
 	
 	/**
@@ -37,7 +44,7 @@ public class User {
 	 * first name of the user
 	 */
 	@Size(min=2, max=30)
-	@NotEmpty(message="First name cannot be empty")
+	//@NotEmpty(message="First name cannot be empty")
 	private String firstname;
 	
 	/**
@@ -45,7 +52,7 @@ public class User {
 	 * last name of the user
 	 */
 	@Size(min=2, max=30)
-	@NotEmpty(message="Last name cannot be empty")
+	//@NotEmpty(message="Last name cannot be empty")
 	private String lastname;
 	
 	/**
@@ -53,14 +60,14 @@ public class User {
 	 * user's email
 	 */
 	@Email
-	@NotEmpty(message="Email cannot be empty")
+	//@NotEmpty(message="Email cannot be empty")
 	private String email;
 	
 	/**
 	 * 
 	 * contact of the user
 	 */
-	@NotEmpty(message="Contact cannot be empty")
+	//@NotEmpty(message="Contact cannot be empty")
 	private String contact;
 	
 	
@@ -83,6 +90,23 @@ public class User {
 	 * In case if admin creates the user, in that case admin id will be held
 	 * 
 	 */
+	
+	/**
+	 * Roles is referred in the User details
+	 */
+	@ManyToOne
+	@JoinColumn(name="fk_role_id", columnDefinition="int default 8")
+	//@Column(name="fk_role_id")
+	private Roles roles;
+	
+	public Roles getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Roles roles) {
+		this.roles = roles;
+	}
+
 	private int created_by = 2; //default value
 	
 	/**

@@ -16,59 +16,75 @@
 		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-		
-		<context:component-scan base-package="com.yash.pfs.controller"></context:component-scan>
-		<context:component-scan base-package="com.yash.pfs.daoImpl"></context:component-scan>
-		<context:component-scan base-package="com.yash.pfs.serviceImpl"></context:component-scan>
-		<context:component-scan base-package="com.yash.pfs.model"></context:component-scan>
-		
-		<mvc:annotation-driven />
-		
-		<!-- view Resolver -->
-		<bean id="jspViewResolver"
-			class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-			<property name="prefix" value="/WEB-INF/view" />
-			<property name="suffix" value=".jsp" />	
-		</bean>
-		
-		<!-- property file -->
-		<bean id="propertyConfigurer"
-			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-			p:location="/WEB-INF/jdbc.properties">
-		</bean>
-		
-		<bean id="jdbcTemplate"
-			class="org.springframework.jdbc.core.JdbcTemplate">
-			<property name="dataSource" ref="dataSource"></property>	
-		</bean>
-		
-		<!-- Basic Data Source Apache Commons for providing and managing connection 
+
+	<context:component-scan base-package="com.yash.pfs.controller" />
+	<context:component-scan base-package="com.yash.pfs.daoImpl" />
+	<context:component-scan base-package="com.yash.pfs.serviceImpl" />
+
+	<mvc:annotation-driven />
+
+	<!-- view Resolver -->
+	<bean id="jspViewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/view" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:userMessages" />
+	</bean>
+
+	<!-- property file -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+		p:location="/WEB-INF/jdbc.properties">
+	</bean>
+
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<!-- Basic Data Source Apache Commons for providing and managing connection 
 		objects -->
-		<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
-			destroy-method="close" p:driverClassName="${jdbc.driverClassName}"
-			p:url="${jdbc.url}" p:username="${jdbc.username}" p:password="${jdbc.password}">
-		</bean>
-		
-		<!-- hibernate transaction management -->
-		<tx:annotation-driven transaction-manager="hibernateTransactionManager"/>
-		
-		<!-- Hibernate Session Factory -->
-		<bean id="sessionFactory"
-			class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-			<property name="dataSource" ref="dataSource"></property>
-			<property name="configLocation">
-				<value>classpath:hibernate.cfg.xml</value>
-			</property>
-			<property name="configurationClass">
-				<value>org.hibernate.cfg.AnnotationConfiguration</value>
-			</property>
-			<property name="hibernateProperties">
-				<props>
-					<prop key="hibernate.dialect">${hibernate.dialect}</prop>
-					<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
-					<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
-				</props>
-			</property>
-		</bean>
-		
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" p:driverClassName="${jdbc.driverClassName}"
+		p:url="${jdbc.url}" p:username="${jdbc.username}" p:password="${jdbc.password}">
+	</bean>
+
+	<!-- Hibernate -->
+	<!-- hibernate transaction management -->
+	<tx:annotation-driven transaction-manager="hibernateTransactionManager" />
+
+	<!-- Hibernate Transaction Management -->
+	<bean class="org.springframework.orm.hibernate3.HibernateTransactionManager"
+		id="hibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<!-- Hibernate Session Factory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="configLocation">
+			<value>classpath:hibernate.cfg.xml</value>
+		</property>
+		<property name="configurationClass">
+			<value>org.hibernate.cfg.AnnotationConfiguration</value>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!--  <mvc:resources mapping="/resources/css/**" location="/resources/css/" />
+	<mvc:resources mapping="/resources/images/**" location="/resources/images/" />
+	<mvc:resources mapping="/vendor/css/**" location="/vendor/css/" />
+	<mvc:resources mapping="/vendor/fonts/**" location="/vendor/fonts/" />
+	<mvc:resources mapping="/vendor/js/**" location="/vendor/js/" />
+	-->
 </beans>
