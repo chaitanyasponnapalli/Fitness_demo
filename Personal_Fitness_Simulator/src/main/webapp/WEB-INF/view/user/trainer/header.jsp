@@ -2,7 +2,26 @@
 <script type="text/javascript">
 	function hide(target) {
 	    document.getElementById(target).style.display = 'none';
+	    localStorage.setItem('show', 'false');
 	}
+</script>
+<script type="text/javascript">
+function show(target) {
+	//alert('logged out..');
+    document.getElementById(target).style.display = 'block';
+    localStorage.setItem('show', 'true');
+}
+</script>
+<script type="text/javascript">
+window.onload = function() {
+    var show = localStorage.getItem('show');
+    if(show === 'false'){
+         document.getElementById('nh').style.display = "none";
+    }
+    else
+    	document.getElementById('nh').style.display = "block";
+}
+	
 </script>
 <style type="text/css">
 	.headingDiv{
@@ -45,11 +64,11 @@
             
             <ul class="nav navbar-nav navbar-right">
             	<li><a style="text-transform: uppercase">Welcome: ${loggedInUser.firstname}</a></li>
-                <li><a href="../user/logout.htm">Logout</a></li>
+                <li><a href="../user/logout.htm" onclick="show('nh')">Logout</a></li>
             </ul>
         </div>
 	</nav>
-	<div class="headingDiv" id="nh" style="display:none;">
+	<div class="headingDiv" id="nh">
 		<h1>Gold's Gym</h1>
 		<div class="childDiv">
 			<h2>
