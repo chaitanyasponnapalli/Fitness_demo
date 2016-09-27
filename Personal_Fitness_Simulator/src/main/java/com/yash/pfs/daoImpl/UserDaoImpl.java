@@ -54,34 +54,26 @@ public class UserDaoImpl implements UserDao{
 		return compLocList;
 	}
 
-	public List<User_Schedule> getUserSchedule(int id,  String todayDate) {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date date=null;
-		try {
-			date = dateFormat.parse(todayDate);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public List<User_Schedule> getUserSchedule(int id,  Date todayDate) {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(User_Schedule.class);
-		System.out.println("id:"+id);
 		criteria.add(Restrictions.eq("fk_user_id", id));
-		criteria.add(Restrictions.eq("date", date));
-		System.out.println("date:"+date);
+		criteria.add(Restrictions.eq("date", todayDate));
 		List<User_Schedule> compLocList = (List<User_Schedule>) criteria.list();
-		System.out.println("list size:"+compLocList.size());
 		return compLocList;
 	}
 
 	public List<User_Schedule> getUserScheduleList(int id) {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(User_Schedule.class);
-		System.out.println("id:"+id);
 		criteria.add(Restrictions.eq("fk_user_id", id));
 		List<User_Schedule> compLocList = (List<User_Schedule>) criteria.list();
-		System.out.println("list size:"+compLocList.size());
 		return compLocList;
+	}
+
+	public void insertSchedule(User_Schedule user_schedule) {
+		Session session=sessionFactory.getCurrentSession();
+		session.save(user_schedule);		
 	}
 
 }

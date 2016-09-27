@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
 		return userDao.getUsers(id);
 	}
 	@Transactional
-	public List<User_Schedule> getUserSchedule(int id,  String todayDate) {
+	public List<User_Schedule> getUserSchedule(int id, Date todayDate) {
 		// TODO Auto-generated method stub
 		return userDao.getUserSchedule(id, todayDate);
 	}
@@ -37,6 +37,11 @@ public class UserServiceImpl implements UserService {
 	public List<User_Schedule> getUserScheduleList(int id) {
 		// TODO Auto-generated method stub
 		return userDao.getUserScheduleList(id);
+	}
+	@Transactional
+	public void insertSchedule(User_Schedule user_schedule) {
+		userDao.insertSchedule(user_schedule);
+		
 	}
 
 }

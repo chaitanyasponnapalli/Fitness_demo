@@ -8,7 +8,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="#" class="navbar-brand">PFS App</a>
+            <a href="#" class="navbar-brand">PFS APP</a>
         </div>
         <!-- Collection of nav links, forms, and other content for toggling -->
         <div id="navbarCollapse" class="collapse navbar-collapse">
@@ -21,21 +21,17 @@
                         <li><a href="../user/viewSchedule.htm">View Schedule</a></li>
                     </ul>
                 </li>
-                
-                
             </ul>
             
-            <!--  
-            <form role="search" action="../admin/freesearch.htm" class="navbar-form navbar-left" method="POST">
-                <div class="form-group">
-                    <input type="text" placeholder="Search" class="form-control" name="searchText">
-                </div>
-            </form>
-            -->
             <ul class="nav navbar-nav navbar-right">
             	<li><a style="text-transform: uppercase">Welcome: ${loggedInUser.firstname}</a></li>
                 <li><a href="../user/logout.htm">Logout</a></li>
             </ul>
         </div>
     </nav>
+	<div>
+		<center>
+			<h1>Gold's Gym</h1>
+		</center>
+	</div>
 </div>                               		

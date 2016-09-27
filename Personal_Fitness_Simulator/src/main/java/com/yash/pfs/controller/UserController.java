@@ -10,8 +10,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,7 +43,12 @@ public class UserController{
 		return mav;
 	}
 	
-	
+	@InitBinder
+	public void initBinder(WebDataBinder webDataBinder) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		dateFormat.setLenient(false);
+		webDataBinder.registerCustomEditor(Date.class,"date",new CustomDateEditor(dateFormat, true));
+	}
 	
 	@RequestMapping("/processLogin")
 	public String processLogin(@RequestParam("email") String email,@RequestParam("password") String password, Model model,HttpServletRequest req) {
@@ -88,21 +101,56 @@ public class UserController{
 	public String viewScheduleTodayForm(HttpSession session,Model model, HttpServletRequest req) {
 		
 		User loggedInUser = (User) session.getAttribute("loggedInUser");
-		
-		
-		
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		   //get current date time with Date()
-		   Date date = new Date();
-		   System.out.println(dateFormat.format(date));
-
-		   //get current date time with Calendar()
-		   Calendar cal = Calendar.getInstance();
-		
-		   
-		List<User_Schedule> userScheduleList=userService.getUserSchedule(loggedInUser.getId(),dateFormat.format(cal.getTime()));
+		Date date1 = new Date(); // timestamp now
+		Calendar cal = Calendar.getInstance(); // get calendar instance
+		cal.setTime(date1); // set cal to date
+		cal.set(Calendar.HOUR_OF_DAY, 0); // set hour to midnight
+		cal.set(Calendar.MINUTE, 0); // set minute in hour
+		cal.set(Calendar.SECOND, 0); // set second in minute
+		cal.set(Calendar.MILLISECOND, 0); // set millis in second
+		Date zeroedDate = cal.getTime(); // actually computes the new Date
+		//System.out.println("cal.getTime:" + zeroedDate);
+		List<User_Schedule> userScheduleList = userService.getUserSchedule(loggedInUser.getId(), zeroedDate);
 		model.addAttribute("user_schedule", userScheduleList);
 		return "/user/gymUser/viewLocationstodayhomepage";
+	}
+	
+	@RequestMapping("/addSchedule")
+	public String addSchedule(@RequestParam(value="can_id") String can_id, Model model, HttpSession session){
+		//model.addAttribute("user_id", can_id);
+		System.out.println("in add schedule..");
+		session.setAttribute("fk_user_id", Integer.parseInt(can_id));
+		return "/user/trainer/addSchedulePage";
+	}
+	
+	@RequestMapping("/processScheduleInsert")
+	public ResponseEntity  insertSchedule(Model model, @ModelAttribute("user_schedule") User_Schedule user_schedule, HttpSession session){
+		user_schedule.setFk_user_id((Integer)session.getAttribute("fk_user_id"));
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date=new Date();
+		Calendar cal=Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.HOUR_OF_DAY,0);
+		cal.set(Calendar.MINUTE,0);
+		cal.set(Calendar.SECOND,0);
+		cal.set(Calendar.MILLISECOND,0);
+		Date zeroedDate=cal.getTime();
+		//user_schedule.setDate(zeroedDate);
+		user_schedule.setCreated_by(3);
+		user_schedule.setLast_modified_by(3);
+
+		userService.insertSchedule(user_schedule);
+		return new ResponseEntity(HttpStatus.OK);
+		
+	}
+	
+	@RequestMapping("/viewScheduleTrainer")
+	public String viewScheduleTrnr(HttpSession session,Model model, HttpServletRequest req, @RequestParam(value="can_id") String can_id) {
+		System.out.println("viewScheduleTrnr...");
+		//User loggedInUser = (User) session.getAttribute("loggedInUser");
+		List<User_Schedule> userScheduleList=userService.getUserScheduleList(Integer.parseInt(can_id));
+		model.addAttribute("user_schedule", userScheduleList);
+		return "/user/gymUser/viewLocationsToday";
 	}
 	
 	@RequestMapping("/logout")
